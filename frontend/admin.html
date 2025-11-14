@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Turf Panel | PlaySpots</title>
+
+  <!-- 🌐 Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <style>
+    /* Base */
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      height: 100vh;
+    }
+
+    /* 🎥 Background Video */
+    #bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      filter: brightness(85%) contrast(115%) saturate(130%);
+    }
+
+    /* 🌫️ Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.45) 100%);
+      z-index: -1;
+    }
+
+    /* 🧭 Header */
+    header {
+      background: rgba(0, 0, 0, 0.25);
+      padding: 18px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+
+    header h2 {
+      font-size: 26px;
+      font-weight: 600;
+      background: linear-gradient(45deg, #066470, #00ffb8);
+      /* -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; */
+      text-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #00e0ff, #00ffb8);
+      border: none;
+      border-radius: 25px;
+      padding: 10px 18px;
+      color: #2d3436;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    }
+
+    .logout-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+    }
+
+    /* 🧩 Main Container */
+    .admin-container {
+      padding: 40px;
+      text-align: center;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .admin-container h3 {
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #00ffcc;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    /* ✏️ Form Inputs */
+    input {
+      width: 260px;
+      margin: 8px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      border-color: #00ffcc;
+      box-shadow: 0 0 10px #00ffcc;
+      transform: scale(1.05);
+    }
+
+    button {
+      background: linear-gradient(135deg, #00e0ff, #00ffb8);
+      color: #2d3436;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    }
+
+    button:hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.7);
+    }
+
+    /* 🏟️ Turf List */
+    #turfList {
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      justify-items: center;
+    }
+
+    .turf-card {
+      width: 280px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+      transition: all 0.4s ease;
+    }
+
+    .turf-card:hover {
+      transform: translateY(-10px) scale(1.03);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+    }
+
+    .turf-card img {
+      width: 100%;
+      height: 160px;
+      border-radius: 10px;
+      object-fit: cover;
+      margin-bottom: 12px;
+    }
+
+    .turf-card h4 {
+      margin: 8px 0;
+      color: #00ffcc;
+    }
+
+    .turf-card p {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.95);
+      margin: 5px 0;
+    }
+
+    .delete-btn {
+      margin-top: 10px;
+      background: linear-gradient(135deg, #ff7675, #d63031);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .delete-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+    }
+
+    /* 📊 Stats Cards */
+    .stats-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 25px;
+      margin-bottom: 40px;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .stat-card {
+      width: 200px;
+      height: 130px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
+      text-align: center;
+      padding: 20px;
+      transition: all 0.4s ease;
+      animation: floatCard 3s infinite ease-in-out;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
+    }
+
+    @keyframes floatCard {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    .stat-card i {
+      font-size: 36px;
+      color: #00ffcc;
+      margin-bottom: 10px;
+    }
+
+    .stat-card h4 {
+      font-size: 28px;
+      margin: 5px 0;
+      color: #fff;
+      text-shadow: 0 0 10px #00ffcc;
+    }
+
+    .stat-card p {
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* 📈 Charts */
+    .chart-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 40px;
+      margin-bottom: 60px;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .chart-box {
+      width: 400px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 15px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+      transition: all 0.4s ease;
+    }
+
+    .chart-box:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
+    }
+
+    /* 🕒 Recent Activity Table */
+    .recent-container {
+      display: flex;
+      justify-content: center;
+      margin: 30px 0;
+    }
+
+    .recent-table {
+      width: 90%;
+      max-width: 800px;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      animation: fadeIn 1s ease-in;
+    }
+
+    .recent-table th,
+    .recent-table td {
+      padding: 14px 18px;
+      text-align: left;
+      color: #fff;
+    }
+
+    .recent-table th {
+      background: rgba(0, 255, 255, 0.25);
+      text-shadow: 0 0 8px #00ffcc;
+      letter-spacing: 0.5px;
+    }
+
+    .recent-table tr {
+      transition: all 0.3s ease;
+    }
+
+    .recent-table tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .recent-table tr:hover {
+      background: rgba(0, 255, 255, 0.2);
+      transform: scale(1.01);
+    }
+
+    /* 🌀 Smooth row fade */
+    #recentTable tbody tr {
+      transition: opacity 0.6s ease-in-out;
+    }
+
+    /* 🧮 Live Booking Counter */
+    .live-counter {
+      background: rgba(0, 255, 255, 0.15);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: 25px;
+      padding: 8px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      color: #00fff7;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .live-counter:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+    }
+
+    .live-counter i {
+      font-size: 20px;
+      color: #00ffcc;
+      text-shadow: 0 0 8px #00fff7;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+    }
+
+    /* 👤 Admin Profile Card */
+    .admin-profile {
+      position: fixed;
+      top: 90px;
+      right: 30px;
+      background: rgba(0, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 15px 25px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      width: 280px;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      animation: floatProfile 4s infinite ease-in-out;
+    }
+
+    @keyframes floatProfile {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-info i {
+      font-size: 45px;
+      color: #00ffcc;
+      text-shadow: 0 0 10px #00fff7;
+    }
+
+    .profile-info h4 {
+      margin: 0;
+      color: #00ffcc;
+      font-weight: 600;
+      text-shadow: 0 0 8px #00ffcc;
+    }
+
+    .profile-info p {
+      margin: 0;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .logout-animated {
+      background: linear-gradient(135deg, #ff7675, #d63031);
+      border: none;
+      color: white;
+      border-radius: 25px;
+      padding: 8px 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+    }
+
+    .logout-animated:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
+    }
+
+    /* ⏰ Live Clock Styling */
+    .live-clock {
+      position: fixed;
+      top: 90px;
+      left: 30px;
+      background: rgba(0, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 15px 25px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      animation: floatClock 4s infinite ease-in-out;
+      color: #00ffcc;
+    }
+
+    @keyframes floatClock {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    .live-clock i {
+      font-size: 42px;
+      color: #00fff7;
+      text-shadow: 0 0 12px #00fff7;
+    }
+
+    .live-clock h4 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 600;
+      color: #00ffcc;
+      text-shadow: 0 0 8px #00ffcc;
+    }
+
+    .live-clock p {
+      margin: 0;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* 🌟 Welcome Popup Animation */
+    .welcome-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: rgba(0, 255, 255, 0.15);
+      border: 1px solid rgba(0, 255, 255, 0.4);
+      border-radius: 20px;
+      padding: 25px 40px;
+      text-align: center;
+      font-size: 22px;
+      color: #00fff7;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+      opacity: 0;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      transition: all 0.8s ease;
+      text-shadow: 0 0 15px #00fff7;
+    }
+
+    .welcome-popup.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .welcome-popup.hide {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    /* 👤 Admin Profile Card - repositioned */
+    .admin-profile {
+      position: fixed;
+      top: 110px;
+      /* ⬇ moved slightly down */
+      right: 40px;
+      background: rgba(0, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 15px 25px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      width: 280px;
+      z-index: 20;
+      /* ensure above background but below main header */
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      animation: floatProfile 4s infinite ease-in-out;
+    }
+
+    /* ⏰ Live Clock - repositioned and balanced */
+    .live-clock {
+      position: fixed;
+      top: 110px;
+      /* ⬇ aligned with admin profile */
+      left: 40px;
+      background: rgba(0, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 15px 25px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      z-index: 20;
+      animation: floatClock 4s infinite ease-in-out;
+      color: #00ffcc;
+    }
+
+    /* ⬆ slightly shift Add Turf section down to avoid overlap */
+    .admin-container {
+      padding: 180px 40px 40px;
+      /* top padding increased to make room */
+      text-align: center;
+      animation: fadeIn 1s ease-in;
+    }
+
+    /* 🌟 Entry Animation for Floating Widgets */
+    @keyframes fadeSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+      }
+
+      60% {
+        opacity: 1;
+        transform: translateY(10px) scale(1.02);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Apply animation to both cards */
+    .live-clock,
+    .admin-profile {
+      opacity: 0;
+      /* start invisible */
+      animation: fadeSlideIn 1.2s ease forwards;
+    }
+
+    /* add slight delay for profile to stagger nicely */
+    .admin-profile {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes pulseGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 40px rgba(0, 255, 255, 0.8);
+      }
+    }
+
+    /* apply glowing pulse after fade animation */
+    .live-clock,
+    .admin-profile {
+      animation: fadeSlideIn 1.2s ease forwards, pulseGlow 3.5s infinite ease-in-out;
+    }
+
+    /* 🌟 Add Turf Section Entry Animation */
+    @keyframes slideUpFade {
+      0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.98);
+        filter: blur(5px);
+      }
+
+      60% {
+        opacity: 1;
+        transform: translateY(-5px) scale(1.02);
+        filter: blur(0);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Apply to Add Turf and Dashboard Sections */
+    .admin-container h3,
+    .admin-container input,
+    .admin-container button,
+    .stats-grid,
+    .chart-container,
+    .recent-container,
+    #turfList {
+      opacity: 0;
+      animation: slideUpFade 1.2s ease forwards;
+    }
+
+    /* Stagger timing for smooth flow */
+    .admin-container h3:nth-of-type(1) {
+      animation-delay: 1.2s;
+      /* Add Turf heading */
+    }
+
+    .admin-container input:nth-of-type(1) {
+      animation-delay: 1.4s;
+    }
+
+    .admin-container input:nth-of-type(2) {
+      animation-delay: 1.5s;
+    }
+
+    .admin-container input:nth-of-type(3) {
+      animation-delay: 1.6s;
+    }
+
+    .admin-container button {
+      animation-delay: 1.8s;
+    }
+
+    .stats-grid {
+      animation-delay: 2s;
+    }
+
+    .chart-container {
+      animation-delay: 2.2s;
+    }
+
+    .recent-container {
+      animation-delay: 2.4s;
+    }
+
+    #turfList {
+      animation-delay: 2.6s;
+    }
+
+    button {
+      position: relative;
+      overflow: hidden;
+      /* needed for ripple effect */
+      background: linear-gradient(135deg, #00e0ff, #00ffb8);
+      color: #2d3436;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    }
+
+    /* ✨ Hover Pulse Glow */
+    button:hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.7);
+      background: linear-gradient(135deg, #00ffb8, #00e0ff);
+      letter-spacing: 0.5px;
+    }
+
+    /* 🌊 Ripple Effect */
+    button::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      display: block;
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1);
+      transition: transform 0.6s ease, opacity 0.6s ease;
+    }
+
+    /* When button is clicked (ripple visible) */
+    button.ripple-active::after {
+      opacity: 0.4;
+      transform: scale(15);
+    }
+
+    /* 🌟 Global Neon Button Style (applies to all buttons) */
+    button {
+      position: relative;
+      overflow: hidden;
+      /* for ripple */
+      background: linear-gradient(135deg, #00e0ff, #00ffb8);
+      color: #2d3436;
+      border: none;
+      border-radius: 30px;
+      padding: 10px 22px;
+      cursor: pointer;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    }
+
+    /* ✨ Hover Pulse Glow */
+    button:hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.7);
+      background: linear-gradient(135deg, #00ffb8, #00e0ff);
+    }
+
+    /* 🌊 Ripple Effect */
+    button::after {
+      content: "";
+      position: absolute;
+      left: var(--ripple-x);
+      top: var(--ripple-y);
+      width: 20px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      opacity: 0;
+      transform: scale(1);
+      transition: transform 0.6s ease, opacity 0.6s ease;
+      pointer-events: none;
+    }
+
+    /* When ripple activates */
+    button.ripple-active::after {
+      opacity: 0.35;
+      transform: scale(15);
+    }
+
+    /* 🔴 Special: Logout or Delete buttons get red gradient */
+    button.logout-btn,
+    button.delete-btn {
+      background: linear-gradient(135deg, #ff7675, #d63031);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+    }
+
+    button.logout-btn:hover,
+    button.delete-btn:hover {
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.7);
+      background: linear-gradient(135deg, #ff5252, #ff7675);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .booking-popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(0, 255, 255, 0.5);
+      color: #00fff7;
+      padding: 15px 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+      font-size: 15px;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.6s ease;
+      z-index: 999;
+    }
+
+    .booking-popup.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .booking-popup i {
+      font-size: 20px;
+      color: #00fff7;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 🌟 Welcome Animation Message -->
+  <audio id="notifySound" src="assets/sounds/notify.mp3" preload="auto"></audio>
+
+
+  <script>
+    // ✅ Block access if no admin token
+    const token = localStorage.getItem("adminToken");
+    if (!token) {
+      alert("Unauthorized access! Please log in as admin.");
+      window.location.href = "admin-login.html";
+    }
+    /* 🌟 Neon Add Turf Button Hover & Click Animation */
+
+
+  </script>
+
+  <!-- 🎥 Background -->
+  <video autoplay muted loop id="bgVideo">
+    <source src="https://v.ftcdn.net/03/98/98/56/700_F_398985673_AgGK5iWdNMw6ae9AdmmRbAE12j6K8N09_ST.mp4"
+      type="video/mp4">
+  </video>
+
+  <div class="overlay"></div>
+
+  <!-- 🧭 Header -->
+  <header>
+    <h2><i class='bx bx-cog'></i> Admin Turf Panel</h2>
+    <div class="live-counter">
+      <i class='bx bx-calendar-check'></i>
+      <span id="liveBookingCount">0</span> Bookings
+    </div>
+    <button class="logout-btn" onclick="logout()"><i class='bx bx-log-out'></i> Logout</button>
+  </header>
+  <!-- 👤 Admin Profile Card -->
+  <!-- <div class="admin-profile">
+    <div class="profile-info">
+      <i class='bx bxs-user-circle'></i>
+      <div>
+        <h4 id="adminEmail">Admin</h4>
+        <p>Administrator</p>
+      </div>
+    </div>
+    <button class="logout-animated" onclick="logout()"></button>
+  </div> -->
+  <!-- ⏰ Live Clock Widget -->
+  <div class="live-clock">
+    <i class='bx bx-time-five'></i>
+    <div>
+      <h4 id="currentTime">--:--:--</h4>
+      <p id="currentDate">-- --- ----</p>
+    </div>
+  </div>
+
+
+
+
+  <!-- ⚙️ Admin Section -->
+  <div class="admin-container">
+    <h3><i class='bx bx-plus-circle'></i> Add Turf</h3>
+
+    <input type="text" id="name" placeholder="Turf Name"><br />
+    <input type="text" id="location" placeholder="Location"><br />
+    <input type="text" id="image" placeholder="Image URL" oninput="previewImage()"><br />
+    <img id="preview" src="" alt="Preview"
+      style="display:none; width:200px; border-radius:10px; margin:10px auto;"><br />
+    <button onclick="addTurf()"><i class='bx bx-upload'></i> Add Turf</button>
+
+
+    <hr style="margin: 40px 0; border: none; border-top: 1px solid rgba(255,255,255,0.3);" />
+
+    <!-- 📊 Stats Section -->
+    <h3><i class='bx bx-bar-chart-alt-2'></i> Dashboard Stats</h3>
+
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <i class='bx bx-football-field'></i>
+        <h4 id="turfCount">0</h4>
+        <p>Total Turfs</p>
+      </div>
+      <div class="stat-card">
+        <i class='bx bx-calendar-check'></i>
+        <h4 id="bookingCount">0</h4>
+        <p>Total Bookings</p>
+      </div>
+      <div class="stat-card">
+        <i class='bx bx-user'></i>
+        <h4 id="userCount">0</h4>
+        <p>Total Users</p>
+      </div>
+    </div>
+
+    <!-- 📈 Chart Section -->
+    <!-- <h3><i class='bx bx-pie-chart-alt'></i> Booking Insights</h3>
+
+    <div class="chart-container">
+      <div class="chart-box">
+        <canvas id="bookingsByTurf"></canvas>
+      </div>
+      <div class="chart-box">
+        <canvas id="bookingsByDate"></canvas>
+      </div>
+    </div> -->
+    <!-- 🕒 Recent Activity -->
+    <h3><i class='bx bx-history'></i> Recent Bookings</h3>
+
+    <div class="recent-container">
+      <table class="recent-table" id="recentTable">
+        <thead>
+          <tr>
+            <th>Turf</th>
+            <th>User</th>
+            <th>Date</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="4" style="text-align:center;opacity:0.7;">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <h3><i class='bx bx-football-field'></i> Existing Turfs</h3>
+    <div id="turfList"></div>
+  </div>
+</body>
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+<script>
+  const socket = io("http://localhost:5000");
+  // 🧠 Listen for new bookings in real-time
+  // 🧠 Listen for new bookings in real-time
+  socket.on("newBooking", (data) => {
+    console.log("📩 New Booking Received:", data);
+
+    // Play sound
+    document.getElementById("notifySound").play().catch(err => console.warn("Sound play failed:", err));
+
+    // Show popup
+    showBookingPopup(data);
+
+    // Update live booking count
+    const countEl = document.getElementById("liveBookingCount");
+    const current = parseInt(countEl.textContent);
+    countEl.textContent = current + 1;
+
+    // Add to table instantly
+    const tableBody = document.querySelector("#recentTable tbody");
+    const row = `
+    <tr style="animation: fadeIn 0.5s;">
+      <td>${data.turfName}</td>
+      <td>${data.userEmail}</td>
+      <td>${data.date}</td>
+      <td>${data.time}</td>
+    </tr>`;
+    tableBody.insertAdjacentHTML("afterbegin", row);
+  });
+
+  const liveCountEl = document.getElementById("liveBookingCount");
+
+  socket.on("connect", () => {
+    console.log("🟢 Connected to Socket.io Server (Admin)");
+  });
+
+  async function getInitialCount() {
+    const res = await fetch("http://localhost:5000/api/admin/stats");
+    const data = await res.json();
+    liveCountEl.textContent = data.totalBookings;
+  }
+
+  socket.on("newBooking", (data) => {
+    console.log("📩 New Booking Received:", data);
+    let currentCount = parseInt(liveCountEl.textContent);
+    liveCountEl.textContent = currentCount + 1;
+    liveCountEl.style.animation = "pulse 0.5s";
+    setTimeout(() => (liveCountEl.style.animation = ""), 500);
+  });
+
+  getInitialCount();
+
+  function logout() {
+    localStorage.removeItem("adminToken");
+    alert("Logged out successfully!");
+    window.location.href = "admin-login.html";
+  }
+  function logout() {
+    localStorage.removeItem("adminToken"); // clear token
+    alert("Logged out successfully!");
+    window.location.href = "admin-login.html";
+  }
+  function updateClock() {
+    const now = new Date();
+    const time = now.toLocaleTimeString("en-US", { hour12: true });
+    const date = now.toLocaleDateString("en-GB", { weekday: "long", year: "numeric", month: "short", day: "numeric" });
+
+    document.getElementById("currentTime").textContent = time;
+    document.getElementById("currentDate").textContent = date;
+  }
+
+  setInterval(updateClock, 1000);
+  updateClock();
+  function showWelcome() {
+    const token = localStorage.getItem("adminToken");
+    let adminEmail = "Admin";
+
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        adminEmail = payload.email.split("@")[0];
+      } catch (err) {
+        console.warn("Token decode failed");
+      }
+    }
+
+    document.getElementById("adminName").textContent = adminEmail;
+    const welcome = document.getElementById("welcomeMessage");
+
+    // show animation
+    welcome.classList.add("show");
+    setTimeout(() => {
+      welcome.classList.add("hide");
+    }, 4000); // after 4 seconds hide
+    setTimeout(() => {
+      welcome.remove();
+    }, 5000); // fully remove after 5s
+  }
+
+  // Trigger after short delay
+  window.addEventListener("load", () => {
+    setTimeout(showWelcome, 800);
+  });
+  window.addEventListener("load", () => {
+    document.body.classList.add("loaded");
+  });
+  document.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", function (e) {
+      // Remove any existing ripple
+      this.classList.remove("ripple-active");
+      void this.offsetWidth; // trigger reflow
+
+      // Position ripple
+      const rect = this.getBoundingClientRect();
+      const ripple = this.style;
+      ripple.setProperty("--ripple-x", `${e.clientX - rect.left}px`);
+      ripple.setProperty("--ripple-y", `${e.clientY - rect.top}px`);
+
+      // Activate animation
+      this.classList.add("ripple-active");
+
+      // Remove class after animation ends
+      setTimeout(() => {
+        this.classList.remove("ripple-active");
+      }, 600);
+    });
+  });
+  document.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", function (e) {
+      // Reset ripple animation
+      this.classList.remove("ripple-active");
+      void this.offsetWidth;
+
+      // Get ripple coordinates
+      const rect = this.getBoundingClientRect();
+      this.style.setProperty("--ripple-x", `${e.clientX - rect.left}px`);
+      this.style.setProperty("--ripple-y", `${e.clientY - rect.top}px`);
+
+      // Trigger ripple
+      this.classList.add("ripple-active");
+
+      // Cleanup
+      setTimeout(() => this.classList.remove("ripple-active"), 600);
+    });
+  });
+  async function addTurf() {
+    const name = document.getElementById("name").value.trim();
+    const location = document.getElementById("location").value.trim();
+    const image = document.getElementById("image").value.trim();
+
+    if (!name || !location || !image) {
+      alert("⚠️ Please fill all fields before adding!");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/api/turf/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, location, image }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert("✅ Turf added successfully!");
+        document.getElementById("name").value = "";
+        document.getElementById("location").value = "";
+        document.getElementById("image").value = "";
+      } else {
+        alert("❌ Failed to add turf: " + (data.message || "Unknown error"));
+      }
+    } catch (err) {
+      console.error("Add Turf Error:", err);
+      alert("❌ Error connecting to server");
+    }
+  }
+  async function deleteTurf(id) {
+    if (!confirm("Are you sure you want to delete this turf?")) return;
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/turf/${id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        alert("🗑️ Turf deleted successfully!");
+        loadTurfs(); // refresh list
+      } else {
+        alert("❌ Failed to delete turf!");
+      }
+    } catch (err) {
+      console.error("Delete Turf Error:", err);
+    }
+  }
+  window.addEventListener("load", loadTurfs);
+  // === TURF FUNCTIONS ===
+
+  // Load all turfs
+  async function loadTurfs() {
+    try {
+      const res = await fetch("http://localhost:5000/api/turf");
+      const turfs = await res.json();
+
+      const turfList = document.getElementById("turfList");
+      turfList.innerHTML = "";
+
+      if (!turfs.length) {
+        turfList.innerHTML = `<p style="opacity:0.7;">No turfs added yet.</p>`;
+        return;
+      }
+
+      turfs.forEach((turf) => {
+        const div = document.createElement("div");
+        div.classList.add("turf-card");
+        div.innerHTML = `
+        <img src="${turf.image}" alt="${turf.name}" />
+        <h4>${turf.name}</h4>
+        <p>${turf.location}</p>
+        <button class="delete-btn" onclick="deleteTurf('${turf._id}')">Delete</button>
+      `;
+        turfList.appendChild(div);
+      });
+    } catch (err) {
+      console.error("Error loading turfs:", err);
+    }
+  }
+
+  // Add new turf
+  // === TURF MANAGEMENT ===
+
+  // === TURF MANAGEMENT ===
+
+  // Load all turfs
+  async function loadTurfs() {
+    try {
+      const res = await fetch("http://localhost:5000/api/turf");
+      const data = await res.json();
+
+      const turfs = data.turfs || data; // works for both array and object responses
+      const turfList = document.getElementById("turfList");
+      turfList.innerHTML = "";
+
+      if (!turfs.length) {
+        turfList.innerHTML = `<p style="opacity:0.7;">No turfs added yet.</p>`;
+        return;
+      }
+
+      turfs.forEach(turf => {
+        const div = document.createElement("div");
+        div.classList.add("turf-card");
+        div.innerHTML = `
+        <img src="${turf.image}" alt="${turf.name}">
+        <h4>${turf.name}</h4>
+        <p>${turf.location}</p>
+        <button class="delete-btn" onclick="deleteTurf('${turf._id}')">Delete</button>
+      `;
+        turfList.appendChild(div);
+      });
+    } catch (err) {
+      console.error("Error loading turfs:", err);
+    }
+  }
+
+  // Add new turf
+  async function addTurf() {
+    const name = document.getElementById("name").value.trim();
+    const location = document.getElementById("location").value.trim();
+    const image = document.getElementById("image").value.trim();
+
+    if (!name || !location || !image) {
+      alert("⚠️ Please fill all fields before adding a turf!");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/api/turf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, location, image }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to add turf");
+
+      alert("✅ Turf added successfully!");
+      document.getElementById("name").value = "";
+      document.getElementById("location").value = "";
+      document.getElementById("image").value = "";
+
+      await loadTurfs(); // refresh list instantly
+    } catch (err) {
+      console.error("Add Turf Error:", err);
+      alert("❌ " + err.message);
+    }
+  }
+
+  // Delete turf
+  async function deleteTurf(id) {
+    if (!confirm("Are you sure you want to delete this turf?")) return;
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/turf/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to delete turf");
+
+      alert("🗑️ Turf deleted successfully!");
+      await loadTurfs();
+    } catch (err) {
+      console.error("Delete Turf Error:", err);
+      alert("❌ " + err.message);
+    }
+  }
+
+  // Load turfs automatically
+  window.addEventListener("load", loadTurfs);
+
+
+
+  // Load dashboard on page open
+  window.addEventListener("load", () => {
+    loadDashboard();
+    loadCharts();
+  });
+  // 🌟 Toastify Notification
+  function showToast(message, color = "#00ffcc") {
+    Toastify({
+      text: message,
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      style: {
+        background: color,
+        color: "#000",
+        borderRadius: "8px",
+        fontWeight: "600"
+      }
+    }).showToast();
+  }
+
+  // 🖼️ Live image preview
+  function previewImage() {
+    const imgURL = document.getElementById("image").value.trim();
+    const preview = document.getElementById("preview");
+
+    if (imgURL) {
+      preview.src = imgURL;
+      preview.style.display = "block";
+    } else {
+      preview.style.display = "none";
+    }
+  }
+
+  async function loadRecentBookings() {
+    try {
+      const res = await fetch("http://localhost:5000/api/admin-auth/recent-bookings");
+      const data = await res.json();
+      const tableBody = document.querySelector("#recentTable tbody");
+      tableBody.innerHTML = "";
+
+      if (!data.length) {
+        tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;opacity:0.7;">No recent bookings found</td></tr>`;
+        return;
+      }
+
+      data.forEach(b => {
+        const row = `
+        <tr>
+          <td>${b.turfName}</td>
+          <td>${b.userEmail}</td>
+          <td>${b.date}</td>
+          <td>${b.time}</td>
+        </tr>`;
+        tableBody.insertAdjacentHTML("beforeend", row);
+      });
+    } catch (err) {
+      console.error("Recent bookings load error:", err);
+    }
+  }
+
+  // 🧭 Load on page start
+  window.addEventListener("load", () => {
+    loadRecentBookings();
+  });
+  // === RECENT BOOKINGS TABLE ===
+  async function loadRecentBookings() {
+    try {
+      const res = await fetch("http://localhost:5000/api/admin-auth/recent-bookings");
+      const data = await res.json();
+      const tableBody = document.querySelector("#recentTable tbody");
+      tableBody.innerHTML = "";
+
+      if (!data.length) {
+        tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;opacity:0.7;">No recent bookings found</td></tr>`;
+        return;
+      }
+
+      data.forEach(b => {
+        const row = `
+        <tr>
+          <td>${b.turfName}</td>
+          <td>${b.userEmail}</td>
+          <td>${b.date}</td>
+          <td>${b.time}</td>
+        </tr>`;
+        tableBody.insertAdjacentHTML("beforeend", row);
+      });
+    } catch (err) {
+      console.error("Recent bookings load error:", err);
+    }
+  }
+
+  // 🧭 Load on page start
+  window.addEventListener("load", () => {
+    loadRecentBookings();
+  });
+
+
+</script>
+
+</html>

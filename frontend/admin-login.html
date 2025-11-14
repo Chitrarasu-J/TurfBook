@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Login | PlaySpots</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+<style>
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  color: white;
+}
+
+/* 🔥 Background Video */
+#bgVideo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  filter: brightness(60%) contrast(110%);
+}
+
+/* 🔥 Glassmorphism Login Card */
+.container {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(15px);
+  padding: 40px;
+  border-radius: 15px;
+  text-align: center;
+  color: #fff;
+  width: 320px;
+  animation: pop 0.6s ease;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+@keyframes pop {
+  from { transform: scale(.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+input {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  text-align: center;
+  outline: none;
+  font-size: 15px;
+}
+
+button {
+  background: #ffeaa7;
+  color: #2d3436;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: .3s;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #fab1a0;
+  transform: scale(1.1);
+}
+
+p {
+  margin-top: 10px;
+  font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🌟 Background Video -->
+<video autoplay muted loop id="bgVideo">
+  <source src="https://media.istockphoto.com/id/1398679317/video/close-up-fresh-grass-in-well-maintained-large-garden-seen-in-early-summer-in-sunset-showing.mp4?s=mp4-640x640-is&k=20&c=MvSOqqU9TNhKzJeFnHIdJVQHLiMHCVlVU_9jkWVBRF0=" type="video/mp4">
+</video>
+
+<div class="container">
+  <h2>Admin Login</h2>
+
+  <form id="adminLoginForm">
+    <input type="email" id="email" placeholder="Email" required /><br />
+    <input type="password" id="password" placeholder="Password" required /><br />
+    <button type="submit">Login</button>
+  </form>
+
+  <p id="msg"></p>
+</div>
+
+<script>
+document.getElementById("adminLoginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  // Get input values
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    const res = await fetch("http://localhost:5000/api/admin-auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      localStorage.setItem("adminToken", data.token);
+
+      // 🔥 DIRECT REDIRECT (NO MESSAGE)
+      window.location.href = "admin.html";
+      return;
+    }
+
+    // ❌ Wrong credentials
+    document.getElementById("msg").textContent = "❌ Invalid Credentials!";
+  } catch (err) {
+    document.getElementById("msg").textContent = "⚠️ Server Error!";
+  }
+});
+</script>
+
+
+</body>
+</html>

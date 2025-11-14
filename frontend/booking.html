@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlaySpots | Book Turf</title>
+
+  <!-- Google Fonts + Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* 🔹 Background video */
+    #bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      filter: brightness(55%) contrast(110%);
+      transition: filter 0.4s ease-in-out;
+    }
+
+    body:hover #bgVideo {
+      filter: brightness(65%) contrast(115%);
+    }
+
+    /* 🔹 Header */
+    header {
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    header h2 {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    /* 🔹 Nav Buttons */
+    nav {
+      display: flex;
+      gap: 15px;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      border-radius: 25px;
+      color: #fff;
+      font-weight: 600;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      font-size: 15px;
+    }
+
+    .nav-btn i {
+      font-size: 18px;
+    }
+
+    .nav-btn:hover {
+      background: #ffeaa7;
+      color: #2d3436;
+      transform: scale(1.08);
+      box-shadow: 0 0 15px rgba(255, 234, 167, 0.5);
+    }
+
+    /* 🔹 Search bar */
+    .search-container {
+      text-align: center;
+      margin: 40px auto 20px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .search-input {
+      width: 60%;
+      max-width: 500px;
+      padding: 12px;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      outline: none;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    }
+
+    /* 🔹 Turf list */
+    .turf-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      padding: 40px;
+      animation: fadeIn 1.2s ease-in-out;
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 🔹 Turf Cards */
+    .turf-card {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .turf-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .turf-card img {
+      width: 100%;
+      height: 180px;
+      border-radius: 12px;
+      object-fit: cover;
+      margin-bottom: 15px;
+      transition: transform 0.4s ease;
+    }
+
+    .turf-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .turf-card h3 {
+      font-size: 20px;
+      margin: 5px 0;
+    }
+
+    button {
+      background: #ffeaa7;
+      color: #2d3436;
+      border: none;
+      border-radius: 30px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background: #fab1a0;
+      transform: scale(1.1);
+    }
+
+    /* 🔹 Loader */
+    #loader {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #00b894, #0984e3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      z-index: 9999;
+      transition: opacity 0.8s ease;
+    }
+    .turf-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.turf-card {
+  width: 280px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  color: white;
+}
+.turf-card img {
+  width: 100%;
+  height: 160px;
+  border-radius: 10px;
+}
+
+  </style>
+
+  <script>
+    window.addEventListener("load", () => {
+      const loader = document.getElementById("loader");
+      loader.style.opacity = "0";
+      setTimeout(() => loader.style.display = "none", 800);
+    });
+
+    function logout() {
+      localStorage.removeItem("email");
+      alert("Logged out successfully!");
+      window.location.href = "index.html";
+    }
+  </script>
+</head>
+<body>
+  <!-- ✅ Background Video -->
+  <video autoplay muted loop id="bgVideo">
+    <source src="https://v.ftcdn.net/15/54/64/81/700_F_1554648111_UYkVgH9kET1hZScBtzVYYkWes21xHUU4_ST.mp4"
+      type="video/mp4">
+  </video>
+
+
+  <!-- ✅ Loader -->
+
+
+
+  <!-- ✅ Header -->
+  <header>
+    <h2>PlaySpots</h2>
+    <nav>
+      <button class="nav-btn" onclick="window.location.href='index.html'">
+        <i class='bx bx-home'></i> Home
+      </button>
+      <button class="nav-btn" onclick="window.location.href='mybookings.html'">
+        <i class='bx bx-list-ul'></i> My Bookings
+      </button>
+      <button class="nav-btn" onclick="logout()">
+        <i class='bx bx-log-out'></i> Logout
+      </button>
+    </nav>
+  </header>
+  <!-- ✅ Search Bar -->
+  <div class="search-container">
+    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search turfs by name or location..." />
+  </div>
+  
+ <h2>Available Turfs</h2>
+<div id="turfContainer" class="turf-grid"></div>
+</body>
+<script>
+  async function loadTurfs() {
+    try {
+      const res = await fetch("http://localhost:5000/api/turf");
+      const turfs = await res.json();
+
+      const container = document.getElementById("turfContainer");
+      container.innerHTML = "";
+
+      turfs.forEach(turf => {
+        const card = document.createElement("div");
+        card.className = "turf-card";
+        card.innerHTML = `
+          <img src="${turf.image}" alt="${turf.name}">
+          <h3>${turf.name}</h3>
+          <p>${turf.location}</p>
+          <button onclick="bookTurf('${turf._id}')">Book Now</button>
+        `;
+        container.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Error loading turfs:", err);
+    }
+  }
+
+  loadTurfs();
+
+  async function bookTurf(id) {
+    const date = prompt("Enter booking date (YYYY-MM-DD):");
+    const time = prompt("Enter booking time (HH:MM):");
+
+    if (!date || !time) {
+      alert("⚠️ Enter both date & time");
+      return;
+    }
+
+    const token = localStorage.getItem("userToken");
+    let userEmail = "";
+
+    if (token) {
+      try {
+        const data = JSON.parse(atob(token.split(".")[1]));
+        userEmail = data.email;
+      } catch (e) {
+        console.warn("Token decode failed");
+      }
+    }
+
+    const res = await fetch("http://localhost:5000/api/bookings/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ turfId: id, date, time, userEmail })
+    });
+
+    const result = await res.json();
+    if (res.ok) alert("Booking successful!");
+    else alert(result.message);
+  }
+</script>
+
+</html>
