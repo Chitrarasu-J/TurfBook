@@ -15,52 +15,52 @@ Built using Node.js, Express, MongoDB, and Vanilla HTML/CSS/JavaScript with a cl
 
 🏟️ Turf Dashboard
 
--Displays available turfs with pricing
+- Displays available turfs with pricing
 
--User redirected to turf page after successful login
+- User redirected to turf page after successful login
 
 📅 Booking System
 
--Select turf, time slot, and date
+- Select turf, time slot, and date
 
--Booking details stored in MongoDB
+- Booking details stored in MongoDB
 
 🛡️ Session Handling
 
--JWT token stored in browser
+- JWT token stored in browser
 
--Protected pages (login required)
+- Protected pages (login required)
 
 🗄️ Database
 
--MongoDB (Local / Atlas supported)
+- MongoDB (Local / Atlas supported)
 
--Users and bookings stored in collections
+- Users and bookings stored in collections
 
 **🛠️ Tech Stack**\
 Frontend
 
--HTML5
+  HTML5
 
--CSS3
+- CSS3
 
--JavaScript (Vanilla JS)
+- JavaScript (Vanilla JS)
 
 Backend
 
 -Node.js
 
--Express.js
+- Express.js
 
--MongoDB
+- MongoDB
 
--Mongoose
+- Mongoose
 
--JWT (jsonwebtoken)
+- JWT (jsonwebtoken)
 
--bcrypt (password hashing)
+- bcrypt (password hashing)
 
--dotenv
+- dotenv
 
 📁 Project Structure
 ```text
@@ -100,35 +100,41 @@ PORT=5000
 ▶️ How to Run the Project
 
 **backend** \
--cd backend
--npm install
+- cd backend
+- npm install
 
 
 **frontend**\
--cd frontend
--npm install
+- cd frontend
+- npm install
 
 
 🔄 Application Flow
 
--User registers via Signup Page
+- User registers via Signup Page
 
--User logs in via Login Page
+- User logs in via Login Page
 
--On successful login → redirected to Turf Page
+- On successful login → redirected to Turf Page
 
--User selects turf & booking details
+- User selects turf & booking details
 
--Booking stored in MongoDB
+- Booking stored in MongoDB
 
 📌 Future Enhancements
 
--💳 Payment Gateway Integration
+- 💳 Payment Gateway Integration
 
--📊 Admin Dashboard
+- 📊 Admin Dashboard
 
--📆 Slot Availability Check
+- 📆 Slot Availability Check
 
-🔐 Role-based Authentication
+- 🔐 Role-based Authentication
 
-📱 Mobile Responsive UI
+- 📱 Mobile Responsive UI
+
+
+
+
+
+
