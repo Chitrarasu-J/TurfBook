@@ -3,15 +3,15 @@
 A full-stack Turf Booking Web Application that allows users to sign up, log in, view available turfs, and book turf slots.
 Built using Node.js, Express, MongoDB, and Vanilla HTML/CSS/JavaScript with a clear separation between frontend and backend.
 
-**🚀 Features**\
+**🚀 Features**
 
 🔐 User Authentication
 
--Signup with name, email, and password
+- Signup with name, email, and password
 
--Login with credential validation
+- Login with credential validation
 
--JWT-based authentication
+- JWT-based authentication
 
 🏟️ Turf Dashboard
 
