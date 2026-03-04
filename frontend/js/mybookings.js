@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const bookingsDiv = document.getElementById("bookingList");
 
       if (data.length === 0) {
+        bookingsDiv.innerHTML = "<p>No bookings found.</p>";
         bookingsDiv.innerHTML = `<h3>No bookings found 😕</h3>`;
         return;
       }
@@ -30,3 +31,5 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .catch(err => console.log("Error fetching bookings", err));
 });
+
+

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us | PlaySpots</title>
+
+  <!-- Google Fonts + Boxicons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* 🔹 Background video */
+    #bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      filter: brightness(55%) contrast(110%);
+      transition: filter 0.4s ease-in-out;
+    }
+
+    /* 🔹 Header */
+    header {
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    header h2 {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    /* 🔹 Nav Buttons */
+    nav {
+      display: flex;
+      gap: 15px;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      border-radius: 25px;
+      color: #fff;
+      font-weight: 600;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      font-size: 15px;
+    }
+
+    .nav-btn i {
+      font-size: 18px;
+    }
+
+    .nav-btn:hover {
+      background: #ffeaa7;
+      color: #2d3436;
+      transform: scale(1.08);
+      box-shadow: 0 0 15px rgba(255, 234, 167, 0.5);
+    }
+
+    /* 🔹 About Content */
+    .about-container {
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 0 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .about-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .about-header h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .about-header p {
+      font-size: 1.2rem;
+      color: #ecf0f1;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .about-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+
+    .about-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      padding: 30px;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .about-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .about-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: #ffeaa7;
+    }
+
+    .about-card p {
+      line-height: 1.6;
+      color: #ecf0f1;
+    }
+
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      margin: 60px 0;
+      text-align: center;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      padding: 30px;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #ffeaa7;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      font-size: 1.1rem;
+      color: #ecf0f1;
+    }
+
+    .team-section {
+      margin: 60px 0;
+    }
+
+    .team-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .team-header h2 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      color: #ffeaa7;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .team-member {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      padding: 30px;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+    }
+
+    .team-member img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      border: 3px solid #ffeaa7;
+    }
+
+    .team-member h4 {
+      font-size: 1.3rem;
+      margin-bottom: 5px;
+      color: #ffeaa7;
+    }
+
+    .team-member p {
+      color: #ecf0f1;
+      font-size: 0.9rem;
+    }
+
+    .cta-section {
+      text-align: center;
+      margin: 60px 0;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .cta-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #ffeaa7;
+    }
+
+    .cta-button {
+      background: #ffeaa7;
+      color: #2d3436;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      margin: 10px;
+    }
+
+    .cta-button:hover {
+      background: #fab1a0;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+  <!-- ✅ Background Video -->
+  <video autoplay muted loop id="bgVideo">
+    <source src="https://v.ftcdn.net/03/70/55/79/700_F_370557904_hpveGjzL0vnLeDX6csi0YnIZESJwm0NK_ST.mp4" type="video/mp4">
+  </video>
+
+  <!-- ✅ Header -->
+  <header>
+    <h2>PlaySpots</h2>
+    <nav>
+      <button id="homeBtn" class="nav-btn" onclick="window.location.href='index.html'">
+        <i class='bx bx-home'></i> Home
+      </button>
+      <button id="aboutBtn" class="nav-btn" onclick="window.location.href='about.html'">
+        <i class='bx bx-info-circle'></i> About Us
+      </button>
+      <button id="loginBtn" class="nav-btn" onclick="window.location.href='login.html'">
+        <i class='bx bx-log-in'></i>Login
+      </button>
+      <button id="logoutBtn" class="nav-btn" onclick="logout()">
+        <i class='bx bx-log-out'></i> Logout
+      </button>
+      <button id="adminLoginBtn" class="nav-btn" onclick="window.location.href='admin-login.html'">
+        <i class='bx bx-shield-quarter'></i>Admin Login
+      </button>
+    </nav>
+  </header>
+
+  <!-- ✅ About Content -->
+  <div class="about-container">
+    <div class="about-header">
+      <h1>About PlaySpots</h1>
+      <p>Your premier destination for sports turf booking and management</p>
+    </div>
+
+    <div class="about-content">
+      <div class="about-card">
+        <h3><i class='bx bx-target-lock'></i> Our Mission</h3>
+        <p>To make sports accessible to everyone by providing a seamless platform for booking high-quality sports facilities. We believe in promoting active lifestyles and community engagement through sports.</p>
+      </div>
+
+      <div class="about-card">
+        <h3><i class='bx bx-vision'></i> Our Vision</h3>
+        <p>To become the leading sports facility booking platform, connecting players with the best turfs and fields worldwide. We envision a future where everyone has easy access to quality sports infrastructure.</p>
+      </div>
+
+      <div class="about-card">
+        <h3><i class='bx bx-award'></i> Our Values</h3>
+        <p>Quality, convenience, and community are at the heart of everything we do. We strive to provide exceptional service, maintain high standards, and foster a vibrant sports community.</p>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">Active Turfs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">50,000+</div>
+        <div class="stat-label">Happy Players</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">100+</div>
+        <div class="stat-label">Cities Covered</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Support Available</div>
+      </div>
+    </div>
+
+    <div class="team-section">
+      <div class="team-header">
+        <h2>Meet Our Team</h2>
+        <p>The passionate individuals behind PlaySpots</p>
+      </div>
+
+      <div class="team-grid">
+        <div class="team-member">
+          <img src="https://picsum.photos/seed/ceo/100/100.jpg" alt="CEO">
+          <h4>Alex Johnson</h4>
+          <p>Founder & CEO</p>
+        </div>
+        <div class="team-member">
+          <img src="https://picsum.photos/seed/cto/100/100.jpg" alt="CTO">
+          <h4>Sarah Williams</h4>
+          <p>Chief Technology Officer</p>
+        </div>
+        <div class="team-member">
+          <img src="https://picsum.photos/seed/coo/100/100.jpg" alt="COO">
+          <h4>Michael Chen</h4>
+          <p>Chief Operations Officer</p>
+        </div>
+        <div class="team-member">
+          <img src="https://picsum.photos/seed/cmo/100/100.jpg" alt="CMO">
+          <h4>Emily Davis</h4>
+          <p>Chief Marketing Officer</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-section">
+      <h2>Ready to Join the PlaySpots Community?</h2>
+      <p>Start booking your favorite sports turfs today!</p>
+      <a href="booking.html" class="cta-button">Book a Turf Now</a>
+      <a href="signup.html" class="cta-button">Sign Up for Free</a>
+    </div>
+  </div>
+
+  <script>
+    // ✅ Logout Function
+    function logout() {
+      localStorage.removeItem("userToken");
+      localStorage.removeItem("adminToken");
+      alert("Logged out successfully!");
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>

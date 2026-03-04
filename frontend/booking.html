@@ -100,78 +100,224 @@
     .search-input {
       width: 60%;
       max-width: 500px;
-      padding: 12px;
+      padding: 15px 20px 15px 50px;
       border: none;
       border-radius: 50px;
       font-size: 16px;
       outline: none;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
 
-    /* 🔹 Turf list */
-    .turf-list {
+    .search-input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .search-input:focus {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 234, 167, 0.5);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(255, 234, 167, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* .search-container::before {
+      content: "";
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.7);
+      z-index: 3;
+      pointer-events: none;
+    } */
+
+    /* 🔹 Turf Grid */
+    .turf-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
       padding: 40px;
       animation: fadeIn 1.2s ease-in-out;
       position: relative;
       z-index: 2;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* 🔹 Turf Cards */
+    /* 🔹 Enhanced Square Turf Cards */
     .turf-card {
       background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
       border-radius: 15px;
-      padding: 20px;
-      text-align: center;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      width: 280px;
+      height: auto;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
     }
 
     .turf-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     }
 
-    .turf-card img {
+    .turf-image-container {
       width: 100%;
-      height: 180px;
-      border-radius: 12px;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .turf-image {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
-      margin-bottom: 15px;
       transition: transform 0.4s ease;
     }
 
-    .turf-card:hover img {
+    .turf-card:hover .turf-image {
       transform: scale(1.05);
     }
 
-    .turf-card h3 {
-      font-size: 20px;
-      margin: 5px 0;
+    .turf-info {
+      padding: 15px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    button {
+    .turf-info h3 {
+      color: #ffeaa7;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+
+    .location {
+      color: #ecf0f1;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    .price {
+      color: #ffeaa7;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .turf-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .rating {
+      background: rgba(255, 234, 167, 0.2);
+      color: #ffeaa7;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .price {
+      color: #ffeaa7;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .sports-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .sport-tag {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ecf0f1;
+      padding: 4px 10px;
+      border-radius: 15px;
+      font-size: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .book-btn {
       background: #ffeaa7;
       color: #2d3436;
       border: none;
-      border-radius: 30px;
-      padding: 10px 20px;
+      padding: 12px 24px;
+      border-radius: 25px;
       cursor: pointer;
       font-weight: bold;
-      transition: background 0.3s, transform 0.2s;
+      transition: all 0.3s ease;
+      width: 100%;
+      font-size: 0.95rem;
     }
 
-    button:hover {
+    .book-btn:hover {
       background: #fab1a0;
-      transform: scale(1.1);
+      transform: scale(1.05);
+    }
+
+    /* 🔹 No Results State */
+    .no-results {
+      text-align: center;
+      padding: 80px 20px;
+      grid-column: 1 / -1;
+    }
+
+    .no-results i {
+      font-size: 4rem;
+      color: #ffeaa7;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .no-results h3 {
+      color: #ffeaa7;
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .no-results p {
+      color: #ecf0f1;
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    /* 🔹 Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .empty-state i {
+      font-size: 5rem;
+      color: #ffeaa7;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .empty-state h2 {
+      color: #ffeaa7;
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+
+    .empty-state p {
+      color: #ecf0f1;
+      font-size: 1.1rem;
+      opacity: 0.8;
     }
 
     /* 🔹 Loader */
@@ -220,11 +366,12 @@
     });
 
     function logout() {
-      localStorage.removeItem("email");
+      localStorage.removeItem("userToken");
       alert("Logged out successfully!");
-      window.location.href = "index.html";
+      window.location.href = "login.html";
     }
   </script>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 </head>
 <body>
   <!-- ✅ Background Video -->
@@ -245,80 +392,152 @@
       <button class="nav-btn" onclick="window.location.href='index.html'">
         <i class='bx bx-home'></i> Home
       </button>
-      <button class="nav-btn" onclick="window.location.href='mybookings.html'">
-        <i class='bx bx-list-ul'></i>
-      </button>
-      <button class="nav-btn" onclick="logout()">
-        <i class='bx bx-log-out'></i> Logout
-      </button>
     </nav>
   </header>
   <!-- ✅ Search Bar -->
   <div class="search-container">
-    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search turfs by name or location..." />
+    <input type="text" id="searchInput" class="search-input" placeholder="Search turfs by name or location..." onkeyup="searchTurfs()" />
   </div>
   
- <h2>Available Turfs</h2>
-<div id="turfContainer" class="turf-grid"></div>
-</body>
-<script>
-  async function loadTurfs() {
-    try {
-      const res = await fetch("http://localhost:5000/api/turf");
-      const turfs = await res.json();
+  <div id="turfContainer" class="turf-grid"></div>
+  
+  <script>
+    // Load turfs from backend
+    let allTurfs = [];
 
-      const container = document.getElementById("turfContainer");
-      container.innerHTML = "";
-
-      turfs.forEach(turf => {
-        const card = document.createElement("div");
-        card.className = "turf-card";
-        card.innerHTML = `
-          <img src="${turf.image}" alt="${turf.name}">
-          <h3>${turf.name}</h3>
-          <p>${turf.location}</p>
-          <button onclick="bookTurf('${turf._id}')">Book Now</button>
-        `;
-        container.appendChild(card);
-      });
-    } catch (err) {
-      console.error("Error loading turfs:", err);
-    }
-  }
-
-  loadTurfs();
-
-  async function bookTurf(id) {
-    const date = prompt("Enter booking date (YYYY-MM-DD):");
-    const time = prompt("Enter booking time (HH:MM):");
-
-    if (!date || !time) {
-      alert("⚠️ Enter both date & time");
-      return;
-    }
-
-    const token = localStorage.getItem("userToken");
-    let userEmail = "";
-
-    if (token) {
+    async function loadTurfsFromBackend() {
       try {
-        const data = JSON.parse(atob(token.split(".")[1]));
-        userEmail = data.email;
-      } catch (e) {
-        console.warn("Token decode failed");
+        const res = await fetch("http://localhost:5000/api/turf");
+        const turfs = await res.json();
+        
+        allTurfs = turfs;
+        displayTurfs(allTurfs);
+      } catch (err) {
+        console.error("Error loading turfs:", err);
+        const container = document.getElementById("turfContainer");
+        container.innerHTML = `
+          <div class="no-results">
+            <i class='bx bx-error'></i>
+            <h3>Error Loading Turfs</h3>
+            <p>Unable to load turfs. Please try again later.</p>
+          </div>
+        `;
       }
     }
 
-    const res = await fetch("http://localhost:5000/api/bookings/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ turfId: id, date, time, userEmail })
+    // Function to display turfs in square cards
+    function displayTurfs(turfs) {
+      const container = document.getElementById("turfContainer");
+      
+      if (turfs.length === 0) {
+        container.innerHTML = `
+          <div class="no-results">
+            <i class='bx bx-search'></i>
+            <h3>No turfs found</h3>
+            <p>No turfs have been added yet. Please check back later!</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = turfs.map(turf => `
+        <div class="turf-card">
+          <div class="turf-image-container">
+            <img src="${turf.image}" alt="${turf.name}" class="turf-image">
+          </div>
+          <div class="turf-info">
+            <h3>${turf.name}</h3>
+            <p class="location"><i class='bx bx-map'></i> ${turf.location}</p>
+            <p class="price">${turf.price || 'N/A'}</p>
+            <button class="book-btn" onclick="bookTurf('${turf._id}')">Book Now</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Search function
+    function searchTurfs() {
+      const searchTerm = document.getElementById("searchInput").value.toLowerCase().trim();
+      
+      if (searchTerm === "") {
+        displayTurfs(allTurfs);
+        return;
+      }
+
+      const filteredTurfs = allTurfs.filter(turf => 
+        turf.name.toLowerCase().includes(searchTerm) ||
+        turf.location.toLowerCase().includes(searchTerm)
+      );
+
+      displayTurfs(filteredTurfs);
+    }
+
+    // Book turf function
+    function bookTurf(turfId) {
+      const turf = allTurfs.find(t => t._id === turfId);
+      if (!turf) return;
+
+      const date = prompt(`Enter booking date for ${turf.name} (YYYY-MM-DD):`);
+      const time = prompt(`Enter booking time (HH:MM):`);
+
+      if (!date || !time) {
+        alert("⚠️ Please enter both date and time");
+        return;
+      }
+
+      // Send booking to backend
+      sendBookingToBackend(turfId, date, time);
+    }
+
+    // Function to send booking to backend
+    async function sendBookingToBackend(turfId, date, time) {
+      try {
+        const response = await fetch('http://localhost:5000/api/bookings/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            turfId,
+            date,
+            time
+          })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert(`✅ Booking confirmed for ${turfId} on ${date} at ${time}!`);
+          
+          // Emit Socket.io event for real-time admin update
+          if (window.socket) {
+            window.socket.emit('newBooking', {
+              turfId,
+              date,
+              time,
+              userEmail: 'user@example.com'
+            });
+          }
+        } else {
+          alert(`❌ Booking failed: ${data.message || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error('Booking error:', error);
+        alert('❌ Error connecting to server for booking');
+      }
+    }
+
+    // Initialize Socket.io connection
+    document.addEventListener('DOMContentLoaded', function() {
+      // Connect to Socket.io
+      window.socket = io('http://localhost:5000');
+      
+      window.socket.on('connect', function() {
+        console.log('Connected to Socket.io server');
+      });
     });
 
-    const result = await res.json();
-    if (res.ok) alert("Booking successful!");
-    else alert(result.message);
-  }
-</script>
-
+    // Load turfs when page loads
+    window.addEventListener("DOMContentLoaded", loadTurfsFromBackend);
+  </script>
+</body>
 </html>

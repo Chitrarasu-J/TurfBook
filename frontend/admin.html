@@ -84,6 +84,12 @@
       box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
     }
 
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
     /* 🧩 Main Container */
     .admin-container {
       padding: 40px;
@@ -185,12 +191,17 @@
     }
 
     .turf-card p {
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.95);
+      color: #ecf0f1;
       margin: 5px 0;
     }
 
-    .delete-btn {
+    .turf-card .price {
+      color: #ffeaa7;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .turf-card .delete-btn {
       margin-top: 10px;
       background: linear-gradient(135deg, #ff7675, #d63031);
       color: white;
@@ -291,11 +302,61 @@
       box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
     }
 
-    /* 🕒 Recent Activity Table */
+    /* Recent Activity Table */
     .recent-container {
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 30px auto;
+      gap: 20px;
+      max-width: 900px;
+    }
+
+    .booking-controls {
+      display: flex;
+      gap: 15px;
       justify-content: center;
-      margin: 30px 0;
+      margin-bottom: 20px;
+    }
+
+    .control-btn {
+      background: linear-gradient(135deg, #00e0ff, #00ffb8);
+      color: #2d3436;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    }
+
+    .booking-stats {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      background: rgba(0, 255, 255, 0.1);
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      font-size: 0.9rem;
+    }
+
+    .stat-item strong {
+      color: #00fff7;
     }
 
     .recent-table {
@@ -852,8 +913,7 @@
 
 <body>
   <!-- 🌟 Welcome Animation Message -->
-  <audio id="notifySound" src="assets/sounds/notify.mp3" preload="auto"></audio>
-
+  
 
   <script>
     // ✅ Block access if no admin token
@@ -882,7 +942,10 @@
       <i class='bx bx-calendar-check'></i>
       <span id="liveBookingCount">0</span> Bookings
     </div>
-    <button class="logout-btn" onclick="logout()"><i class='bx bx-log-out'></i> Logout</button>
+    <div class="header-actions">
+      <button onclick="window.location.href='index.html'"><i class='bx bx-home'></i> Home</button>
+      <button class="logout-btn" onclick="logout()"><i class='bx bx-log-out'></i> Logout</button>
+    </div>
   </header>
   <!-- 👤 Admin Profile Card -->
   <!-- <div class="admin-profile">
@@ -913,6 +976,7 @@
 
     <input type="text" id="name" placeholder="Turf Name"><br />
     <input type="text" id="location" placeholder="Location"><br />
+    <input type="text" id="price" placeholder="Price per hour (e.g., 800)"><br />
     <input type="text" id="image" placeholder="Image URL" oninput="previewImage()"><br />
     <img id="preview" src="" alt="Preview"
       style="display:none; width:200px; border-radius:10px; margin:10px auto;"><br />
@@ -953,23 +1017,48 @@
         <canvas id="bookingsByDate"></canvas>
       </div>
     </div> -->
-    <!-- 🕒 Recent Activity -->
+    <!-- 🕒 Recent Bookings -->
     <h3><i class='bx bx-history'></i> Recent Bookings</h3>
 
     <div class="recent-container">
+      <div class="booking-controls">
+        <button class="control-btn" onclick="refreshBookings()">
+          <i class='bx bx-refresh'></i> Refresh
+        </button>
+        <button class="control-btn" onclick="clearCurrentBookings()">
+          <i class='bx bx-x-circle'></i> Clear Current
+        </button>
+        <button class="control-btn" onclick="clearAllBookings()">
+          <i class='bx bx-trash'></i> Clear All
+        </button>
+      </div>
+      <div class="booking-stats">
+        <span class="stat-item">Total: <strong id="totalBookingsCount">0</strong></span>
+        <span class="stat-item">Today: <strong id="todayBookingsCount">0</strong></span>
+        <span class="stat-item">Pending: <strong id="pendingBookingsCount">0</strong></span>
+        <button class="control-btn" onclick="refreshDashboard()" style="margin-left: auto; padding: 8px 15px;">
+          <i class='bx bx-refresh'></i> Refresh Stats
+        </button>
+        <button class="control-btn" onclick="testDashboard()" style="margin-left: 10px; padding: 8px 15px; background: #0984e3;">
+          <i class='bx bx-test-tube'></i> Test Dashboard
+        </button>
+        <button class="control-btn" onclick="checkBackend()" style="margin-left: 10px; padding: 8px 15px; background: #e74c3c;">
+          <i class='bx bx-server'></i> Check Backend
+        </button>
+      </div>
       <table class="recent-table" id="recentTable">
         <thead>
           <tr>
-            <th>Turf</th>
-            <th>User</th>
-            <th>Date</th>
-            <th>Time</th>
+            <th><i class='bx bx-calendar'></i> Date</th>
+            <th><i class='bx bx-time'></i> Time</th>
+            <th><i class='bx bx-map'></i> Location</th>
+            <th><i class='bx bx-user'></i> User Name</th>
+            <th><i class='bx bx-cog'></i> Status</th>
+            <th><i class='bx bx-edit'></i> Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td colspan="4" style="text-align:center;opacity:0.7;">Loading...</td>
-          </tr>
+          <!-- Bookings will be loaded here -->
         </tbody>
       </table>
     </div>
@@ -982,10 +1071,9 @@
 <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 <script>
   const socket = io("http://localhost:5000");
-  // 🧠 Listen for new bookings in real-time
-  // 🧠 Listen for new bookings in real-time
+  // Listen for new bookings in real-time
   socket.on("newBooking", (data) => {
-    console.log("📩 New Booking Received:", data);
+    console.log(" New Booking Received:", data);
 
     // Play sound
     document.getElementById("notifySound").play().catch(err => console.warn("Sound play failed:", err));
@@ -998,14 +1086,31 @@
     const current = parseInt(countEl.textContent);
     countEl.textContent = current + 1;
 
-    // Add to table instantly
+    // Extract user name from email
+    const userName = data.userEmail ? data.userEmail.split('@')[0] : 'Unknown';
+    
+    // Map data to correct columns based on actual data structure
+    const dateValue = data.date || 'N/A';
+    const timeValue = data.time || 'N/A';
+    const locationValue = data.turfName || data.location || 'N/A';
+    
+    // Add to table instantly - CORRECT DATA MAPPING
     const tableBody = document.querySelector("#recentTable tbody");
     const row = `
     <tr style="animation: fadeIn 0.5s;">
-      <td>${data.turfName}</td>
-      <td>${data.userEmail}</td>
-      <td>${data.date}</td>
-      <td>${data.time}</td>
+      <td>${dateValue}</td>
+      <td>${timeValue}</td>
+      <td>${locationValue}</td>
+      <td>${userName}</td>
+      <td class="booking-status status-pending">pending</td>
+      <td>
+        <button class="action-btn confirm-btn" onclick="updateBookingStatus('${data._id}', 'confirmed')" title="Confirm">
+          <i class='bx bx-check'></i>
+        </button>
+        <button class="action-btn delete-btn" onclick="deleteBooking('${data._id}')" title="Delete">
+          <i class='bx bx-trash'></i>
+        </button>
+      </td>
     </tr>`;
     tableBody.insertAdjacentHTML("afterbegin", row);
   });
@@ -1013,19 +1118,104 @@
   const liveCountEl = document.getElementById("liveBookingCount");
 
   socket.on("connect", () => {
+    console.log(" Connected to Socket.io Server (Admin)");
     console.log("🟢 Connected to Socket.io Server (Admin)");
   });
 
   async function getInitialCount() {
-    const res = await fetch("http://localhost:5000/api/admin/stats");
-    const data = await res.json();
-    liveCountEl.textContent = data.totalBookings;
+    try {
+      console.log('=== DASHBOARD DEBUG START ===');
+      
+      // Test if elements exist - BOTH sections
+      const elements = {
+        // Main dashboard cards
+        turfCount: document.getElementById("turfCount"),
+        bookingCount: document.getElementById("bookingCount"), 
+        userCount: document.getElementById("userCount"),
+        
+        // Booking stats section
+        liveBookingCount: document.getElementById("liveBookingCount"),
+        totalBookingsCount: document.getElementById("totalBookingsCount"),
+        todayBookingsCount: document.getElementById("todayBookingsCount"),
+        pendingBookingsCount: document.getElementById("pendingBookingsCount")
+      };
+      
+      console.log('1. Dashboard elements found:', elements);
+      
+      // Test API with detailed logging
+      console.log('2. Making API call to: http://localhost:5000/api/admin/stats');
+      
+      const response = await fetch("http://localhost:5000/api/admin/stats");
+      console.log('3. Response status:', response.status);
+      console.log('4. Response ok:', response.ok);
+      
+      if (!response.ok) {
+        console.log('ERROR: API call failed');
+        return;
+      }
+      
+      const data = await response.json();
+      console.log('5. Stats data received:', data);
+      console.log('6. Data type:', typeof data);
+      console.log('7. Data keys:', Object.keys(data));
+      
+      // Update MAIN dashboard elements
+      if (elements.turfCount) {
+        elements.turfCount.textContent = data.totalBookings || 0;
+        console.log('8. Updated turfCount to:', data.totalBookings);
+      }
+      
+      if (elements.bookingCount) {
+        elements.bookingCount.textContent = data.totalBookings || 0;
+        console.log('9. Updated bookingCount to:', data.totalBookings);
+      }
+      
+      if (elements.userCount) {
+        elements.userCount.textContent = data.totalBookings || 0;
+        console.log('10. Updated userCount to:', data.totalBookings);
+      }
+      
+      // Update BOOKING stats section
+      if (elements.liveBookingCount) {
+        elements.liveBookingCount.textContent = data.totalBookings || 0;
+        console.log('11. Updated liveBookingCount to:', data.totalBookings);
+      }
+      
+      if (elements.totalBookingsCount) {
+        elements.totalBookingsCount.textContent = data.totalBookings || 0;
+        console.log('12. Updated totalBookingsCount to:', data.totalBookings);
+      }
+      
+      if (elements.todayBookingsCount) {
+        elements.todayBookingsCount.textContent = data.todayBookings || 0;
+        console.log('13. Updated todayBookingsCount to:', data.todayBookings);
+      }
+      
+      if (elements.pendingBookingsCount) {
+        elements.pendingBookingsCount.textContent = data.pendingBookings || 0;
+        console.log('14. Updated pendingBookingsCount to:', data.pendingBookings);
+      }
+      
+      console.log('=== DASHBOARD DEBUG END ===');
+    } catch (error) {
+      console.error('ERROR in getInitialCount:', error);
+      console.error('Error stack:', error.stack);
+    }
   }
 
   socket.on("newBooking", (data) => {
     console.log("📩 New Booking Received:", data);
-    let currentCount = parseInt(liveCountEl.textContent);
-    liveCountEl.textContent = currentCount + 1;
+    
+    // Update all dashboard stats
+    let currentTotal = parseInt(document.getElementById("liveBookingCount").textContent);
+    let currentToday = parseInt(document.getElementById("todayBookingsCount").textContent);
+    
+    document.getElementById("liveBookingCount").textContent = currentTotal + 1;
+    document.getElementById("totalBookingsCount").textContent = currentTotal + 1;
+    document.getElementById("todayBookingsCount").textContent = currentToday + 1;
+    
+    // Add animation
+    const liveCountEl = document.getElementById("liveBookingCount");
     liveCountEl.style.animation = "pulse 0.5s";
     setTimeout(() => (liveCountEl.style.animation = ""), 500);
   });
@@ -1128,20 +1318,27 @@
   async function addTurf() {
     const name = document.getElementById("name").value.trim();
     const location = document.getElementById("location").value.trim();
+    let price = document.getElementById("price").value.trim();
     const image = document.getElementById("image").value.trim();
 
-    if (!name || !location || !image) {
+    // Clean price field - remove rupee symbol if present
+    price = price.replace(/₹/g, '');
+    
+    // Debug: Log what's being sent
+    console.log('Sending to backend:', { name, location, price, image });
+
+    if (!name || !location || !price || !image) {
       alert("⚠️ Please fill all fields before adding!");
       return;
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/turf/add", {
+      const res = await fetch("http://localhost:5000/api/turf", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, location, image }),
+        body: JSON.stringify({ name, location, price, image }),
       });
 
       const data = await res.json();
@@ -1149,6 +1346,7 @@
         alert("✅ Turf added successfully!");
         document.getElementById("name").value = "";
         document.getElementById("location").value = "";
+        document.getElementById("price").value = "";
         document.getElementById("image").value = "";
       } else {
         alert("❌ Failed to add turf: " + (data.message || "Unknown error"));
@@ -1237,6 +1435,7 @@
         <img src="${turf.image}" alt="${turf.name}">
         <h4>${turf.name}</h4>
         <p>${turf.location}</p>
+        <p class="price">${turf.price || 'N/A'}</p>
         <button class="delete-btn" onclick="deleteTurf('${turf._id}')">Delete</button>
       `;
         turfList.appendChild(div);
@@ -1246,40 +1445,6 @@
     }
   }
 
-  // Add new turf
-  async function addTurf() {
-    const name = document.getElementById("name").value.trim();
-    const location = document.getElementById("location").value.trim();
-    const image = document.getElementById("image").value.trim();
-
-    if (!name || !location || !image) {
-      alert("⚠️ Please fill all fields before adding a turf!");
-      return;
-    }
-
-    try {
-      const res = await fetch("http://localhost:5000/api/turf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, location, image }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to add turf");
-
-      alert("✅ Turf added successfully!");
-      document.getElementById("name").value = "";
-      document.getElementById("location").value = "";
-      document.getElementById("image").value = "";
-
-      await loadTurfs(); // refresh list instantly
-    } catch (err) {
-      console.error("Add Turf Error:", err);
-      alert("❌ " + err.message);
-    }
-  }
-
-  // Delete turf
   async function deleteTurf(id) {
     if (!confirm("Are you sure you want to delete this turf?")) return;
 
@@ -1343,17 +1508,24 @@
       tableBody.innerHTML = "";
 
       if (!data.length) {
-        tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;opacity:0.7;">No recent bookings found</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;opacity:0.7;">No recent bookings found</td></tr>`;
         return;
       }
 
       data.forEach(b => {
+        const userName = b.userEmail ? b.userEmail.split('@')[0] : 'Unknown';
         const row = `
         <tr>
-          <td>${b.turfName}</td>
-          <td>${b.userEmail}</td>
           <td>${b.date}</td>
           <td>${b.time}</td>
+          <td>${b.turfName || b.location || 'N/A'}</td>
+          <td>${userName}</td>
+          <td><span style="color: #00ff88;">Confirmed</span></td>
+          <td>
+            <button onclick="clearCurrentBooking('${b._id}')" style="background:#ff6b6b;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;">
+              <i class='bx bx-trash'></i> Clear
+            </button>
+          </td>
         </tr>`;
         tableBody.insertAdjacentHTML("beforeend", row);
       });
@@ -1362,35 +1534,110 @@
     }
   }
 
-  // 🧭 Load on page start
-  window.addEventListener("load", () => {
-    loadRecentBookings();
-  });
-  // === RECENT BOOKINGS TABLE ===
-  async function loadRecentBookings() {
+  // Test dashboard functionality
+  function testDashboard() {
+    console.log('=== SIMPLE DASHBOARD TEST ===');
+    
+    // Test 1: Check elements exist
+    const elements = {
+      turfCount: document.getElementById("turfCount"),
+      bookingCount: document.getElementById("bookingCount"), 
+      userCount: document.getElementById("userCount")
+    };
+    
+    console.log('Elements found:', elements);
+    
+    // Test 2: Manual update - bypass API completely
+    if (elements.turfCount) {
+      elements.turfCount.textContent = "123";
+      console.log('✅ turfCount updated to 123');
+    } else {
+      console.log('❌ turfCount element not found');
+    }
+    
+    if (elements.bookingCount) {
+      elements.bookingCount.textContent = "456";
+      console.log('✅ bookingCount updated to 456');
+    } else {
+      console.log('❌ bookingCount element not found');
+    }
+    
+    if (elements.userCount) {
+      elements.userCount.textContent = "789";
+      console.log('✅ userCount updated to 789');
+    } else {
+      console.log('❌ userCount element not found');
+    }
+    
+    console.log('=== SIMPLE TEST COMPLETED ===');
+    console.log('If you see 123, 456, 789 on dashboard, elements are working');
+  }
+
+  // Check backend status
+  async function checkBackend() {
+    console.log('=== BACKEND STATUS CHECK ===');
+    
     try {
-      const res = await fetch("http://localhost:5000/api/admin-auth/recent-bookings");
-      const data = await res.json();
-      const tableBody = document.querySelector("#recentTable tbody");
-      tableBody.innerHTML = "";
-
-      if (!data.length) {
-        tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;opacity:0.7;">No recent bookings found</td></tr>`;
-        return;
+      // Test 1: Basic backend connection
+      console.log('1. Testing basic backend connection...');
+      const basicResponse = await fetch('http://localhost:5000/');
+      console.log('1. Backend basic status:', basicResponse.status);
+      
+      // Test 2: Stats API
+      console.log('2. Testing stats API...');
+      const statsResponse = await fetch('http://localhost:5000/api/admin/stats');
+      console.log('2. Stats API status:', statsResponse.status);
+      
+      if (statsResponse.ok) {
+        const data = await statsResponse.json();
+        console.log('2. Stats API data:', data);
+      } else {
+        console.log('2. Stats API failed with status:', statsResponse.status);
       }
+      
+      // Test 3: Turfs API
+      console.log('3. Testing turfs API...');
+      const turfsResponse = await fetch('http://localhost:5000/api/turf');
+      console.log('3. Turfs API status:', turfsResponse.status);
+      
+      if (turfsResponse.ok) {
+        const turfs = await turfsResponse.json();
+        console.log('3. Turfs API data length:', turfs.length);
+      } else {
+        console.log('3. Turfs API failed with status:', turfsResponse.status);
+      }
+      
+      console.log('=== BACKEND CHECK COMPLETED ===');
+    } catch (error) {
+      console.error('BACKEND CONNECTION ERROR:', error);
+      console.error('Error details:', error.message);
+    }
+  }
 
-      data.forEach(b => {
-        const row = `
-        <tr>
-          <td>${b.turfName}</td>
-          <td>${b.userEmail}</td>
-          <td>${b.date}</td>
-          <td>${b.time}</td>
-        </tr>`;
-        tableBody.insertAdjacentHTML("beforeend", row);
+  // Refresh dashboard stats
+  function refreshDashboard() {
+    getInitialCount();
+    loadRecentBookings();
+  }
+
+  // Clear individual booking
+  async function clearCurrentBooking(bookingId) {
+    if (!confirm("Clear this booking?")) return;
+    
+    try {
+      const res = await fetch(`http://localhost:5000/api/bookings/${bookingId}`, {
+        method: 'DELETE'
       });
-    } catch (err) {
-      console.error("Recent bookings load error:", err);
+      
+      if (res.ok) {
+        alert('✅ Booking cleared successfully');
+        refreshDashboard(); // Refresh both stats and table
+      } else {
+        alert('❌ Failed to clear booking');
+      }
+    } catch (error) {
+      console.error('Clear booking error:', error);
+      alert('❌ Error clearing booking');
     }
   }
 
@@ -1398,7 +1645,6 @@
   window.addEventListener("load", () => {
     loadRecentBookings();
   });
-
 
 </script>
 

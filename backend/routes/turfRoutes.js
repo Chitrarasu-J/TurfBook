@@ -5,8 +5,8 @@ const Turf = require("../models/Turf");
 // 🟢 Add new turf
 router.post("/", async (req, res) => {
   try {
-    const { name, location, image } = req.body;
-    const newTurf = new Turf({ name, location, image });
+    const { name, location, price, image } = req.body;
+    const newTurf = new Turf({ name, location, price, image });
     await newTurf.save();
     res.status(201).json({ success: true, message: "Turf added successfully" });
   } catch (err) {

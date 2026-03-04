@@ -72,6 +72,30 @@ app.post("/api/bookings/create", async (req, res) => {
   }
 });
 
+// ✅ Admin Stats API
+app.get("/api/admin/stats", async (req, res) => {
+  try {
+    const totalBookings = await Booking.countDocuments();
+    const todayBookings = await Booking.countDocuments({
+      date: {
+        $gte: new Date().toISOString().split('T')[0]
+      }
+    });
+    
+    const statsData = {
+      totalBookings: Number(totalBookings),
+      todayBookings: Number(todayBookings),
+      pendingBookings: 0
+    };
+    
+    console.log('Stats API response:', statsData);
+    res.json(statsData);
+  } catch (error) {
+    console.error("Stats Error:", error);
+    res.status(500).json({ message: "Failed to get stats" });
+  }
+});
+
 // ✅ Root API
 app.get("/", (req, res) => {
   res.send("Backend Connected Successfully ✅");
